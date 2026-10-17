@@ -1,0 +1,42 @@
+name: Verify styling
+
+on:
+  push:
+    branches: [design/premium-finance-ui]
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'components/**'
+      - 'lib/**'
+      - 'scripts/check*styles.mjs'
+      - 'package*.json'
+      - 'postcss.config.mjs'
+      - 'next.config.ts'
+      - '.github/workflows/styles.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: styles-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Verify Tailwind compilation
+        run: node scripts/check-styles.mjs
+      - name: Build the actual Next.js application
+        run: npm run build
+      - name: Verify CSS assets on the built public and CRM pages
+        run: node scripts/check-built-styles.mjs

@@ -1,0 +1,166 @@
+/* Public layout boundary: one width policy, separate from CRM/data-table widths.
+   Legacy page markup keeps its component styles; this module owns its frames. */
+.root {
+  --site-width: 70rem;
+  --page-width: var(--site-width);
+  --site-gutter: clamp(1.25rem, 3vw, 2rem);
+  --section-space: clamp(3rem, 6vw, 5rem);
+  --site-ink: #193c35;
+  --site-muted: #5d7167;
+  min-inline-size: 0;
+  background: #f8f7f3;
+  color: var(--site-ink);
+}
+.root[data-page="calculator"] { --page-width: 63rem; }
+.root[data-page="contact"] { --page-width: 64rem; }
+.root[data-page="faq"] { --page-width: 47.5rem; }
+.root[data-page="apply"] { --page-width: 46rem; }
+.container {
+  inline-size: min(calc(100% - 2 * var(--site-gutter)), var(--site-width));
+  margin-inline: auto;
+  min-inline-size: 0;
+}
+/* These rules override old page-level max-width utilities, not inner controls. */
+.root > main {
+  box-sizing: border-box;
+  inline-size: min(calc(100% - 2 * var(--site-gutter)), var(--page-width));
+  max-inline-size: var(--page-width);
+  margin-inline: auto;
+  padding-inline: 0;
+  padding-block: var(--section-space);
+}
+.root :where(main, section, article, form, fieldset, details, label) { min-inline-size: 0; }
+.root :where(main, section, div)[class*="grid"] > * { min-inline-size: 0; }
+.root main :where(p) { max-inline-size: 65ch; }
+.root main :where(h2, h3) { overflow-wrap: anywhere; }
+.root main :where(input, select, textarea) { min-inline-size: 0; max-inline-size: 100%; }
+.root main :where(a, button) { overflow-wrap: anywhere; }
+.root main :where(a, button, p) > svg { flex-shrink: 0; }
+.root :where(a, button, summary):focus-visible { outline: 3px solid #ae8446; outline-offset: 4px; }
+.root :where(input, select, textarea):focus-visible { outline: 2px solid #315f52; outline-offset: 2px; }
+.root main :global(.premium-card) {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border-color: #dde5dc;
+  box-shadow: 0 4px 18px rgb(20 54 49 / 3%);
+}
+.root main :global(.premium-card):not(a):hover { box-shadow: 0 4px 18px rgb(20 54 49 / 3%); }
+
+.notice { background: #143833; color: #d8e2db; padding-block: .6rem; font-size: .6875rem; text-align: center; line-height: 1.65; }
+.header { position: sticky; top: 0; z-index: 40; border-bottom: 1px solid #e0e6de; background: #fdfdfa; }
+.headerRow { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-block-size: 5rem; }
+.brand { display: inline-flex; align-items: center; gap: .625rem; font-size: 1.75rem; font-weight: 800; letter-spacing: -.075em; flex-shrink: 0; color: inherit; text-decoration: none; }
+.brandIcon { display: grid; place-items: center; inline-size: 2.375rem; block-size: 2.375rem; border-radius: 6px; background: #193d36; color: #d6b981; }
+.brandDot { color: #b38c51; }
+.desktopNav, .desktopActions { display: none; align-items: center; }
+.desktopNav { gap: 1.375rem; }
+.desktopActions { gap: 1.125rem; flex-shrink: 0; }
+.navLink, .previewLink { display: inline-flex; align-items: center; gap: .375rem; color: #37594d; font-size: .8125rem; line-height: 1.5; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.navLink { padding-block: 1rem; }
+.navLink:hover, .navLink[data-active="true"], .previewLink:hover { color: #8e6a34; }
+.servicesMenu { position: relative; }
+.servicesMenu > summary { cursor: pointer; list-style: none; }
+.servicesMenu > summary::-webkit-details-marker { display: none; }
+.servicesMenu[open] > summary svg { transform: rotate(180deg); }
+.dropdown { position: absolute; top: calc(100% + .65rem); left: -1rem; inline-size: 18rem; padding: .5rem; border: 1px solid #dfe6db; border-radius: 8px; background: white; box-shadow: 0 16px 40px rgb(16 50 43 / 12%); }
+.dropdown a { display: flex; align-items: center; justify-content: space-between; padding: .8rem; border-radius: 4px; color: #35564b; font-size: .8125rem; text-decoration: none; }
+.dropdown a:hover, .dropdown a[aria-current="page"] { background: #f0f4ed; }
+.primaryButton, .goldButton, .textButton { display: inline-flex; align-items: center; justify-content: center; gap: .625rem; min-block-size: 2.75rem; padding: .75rem 1.125rem; border-radius: 5px; font-size: .8125rem; font-weight: 650; line-height: 1.5; text-decoration: none; }
+.primaryButton { background: #193d36; color: white; }
+.primaryButton:hover { background: #2c584a; }
+.goldButton { background: #d6b981; color: #15382f; }
+.goldButton:hover { background: #e3cca3; }
+.textButton { color: inherit; padding-inline: .25rem; }
+.textButton:hover { text-decoration: underline; text-underline-offset: 4px; }
+.mobileToggle { display: grid; place-items: center; inline-size: 2.75rem; block-size: 2.75rem; background: white; border: 1px solid #dfe6db; border-radius: 5px; color: #214638; cursor: pointer; }
+.mobileNav { border-top: 1px solid #e3e8df; max-block-size: calc(100dvh - 8rem); overflow-y: auto; padding-block: 1rem; }
+.mobileNav[hidden] { display: none; }
+.mobileNav a { display: flex; align-items: center; min-block-size: 2.75rem; padding: .65rem .5rem; font-size: .875rem; font-weight: 600; text-decoration: none; color: inherit; }
+.mobileNav a[aria-current="page"] { color: #8e6a34; }
+.mobileNav .primaryButton { margin-block: .75rem; padding: .75rem 1rem; color: white; }
+.mobileServices { padding: 0 .5rem .5rem; }
+.mobileServices summary { cursor: pointer; font-size: .8125rem; color: #647466; padding: .5rem 0; }
+.mobileServices a { padding-inline-start: 1rem; font-size: .8125rem; }
+
+.intro { border-bottom: 1px solid #e1e6dc; padding-block: clamp(2.5rem, 5vw, 4.5rem); background: #f0f3ed; }
+.introContainer { max-inline-size: var(--page-width); }
+.breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: .625rem; margin-bottom: 2rem; font-size: .75rem; color: #627367; }
+.breadcrumbs a { color: inherit; text-decoration: none; }
+.breadcrumbs a:hover { text-decoration: underline; }
+.eyebrow { margin: 0 0 1rem; font-size: .6875rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #84622f; }
+.root .intro h1 { max-inline-size: 22ch; margin: 0; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.12; font-weight: 550; letter-spacing: -.045em; text-wrap: balance; overflow-wrap: anywhere; }
+.introDescription { max-inline-size: 60ch; margin: 1.375rem 0 0; font-size: 1rem; line-height: 1.85; color: var(--site-muted); }
+.introActions { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem; margin-top: 1.75rem; }
+.intro[data-variant="brand"] { background: #193d36; color: #fffdf8; border-bottom-color: transparent; }
+.intro[data-variant="brand"] :is(.breadcrumbs, .introDescription) { color: #c3d3c9; }
+.intro[data-variant="brand"] .eyebrow { color: #d6b981; }
+.intro[data-variant="compact"] { background: #fdfdfb; padding-block: clamp(2rem, 4vw, 3.5rem); }
+.root .intro[data-variant="compact"] h1 { max-inline-size: 25ch; font-size: clamp(1.875rem, 3vw, 2.75rem); }
+.intro[data-variant="compact"] .breadcrumbs { margin-bottom: 1.5rem; }
+
+/* Home keeps full-bleed colour bands, never full-bleed reading/form content. */
+.root[data-page="home"] > main { inline-size: 100%; max-inline-size: none; padding: 0; }
+.root[data-page="home"] > main > :is([id="services"], [id="why-us"]),
+.root[data-page="home"] > main > :is([id="how-it-works"], [id="contact"]) > div,
+.root[data-page="home"] > main > section:first-child > div:last-child {
+  inline-size: min(calc(100% - 2 * var(--site-gutter)), var(--site-width));
+  max-inline-size: var(--site-width);
+  margin-inline: auto;
+  padding-inline: 0;
+  padding-block: var(--section-space);
+}
+.root[data-page="home"] > main > section:first-child > div:last-child { gap: clamp(2rem, 4vw, 3.5rem); }
+.root[data-page="home"] main h1 { max-inline-size: 16ch; font-size: clamp(2.25rem, 4.8vw, 4rem); line-height: 1.09; letter-spacing: -.055em; }
+.root[data-page="home"] main h2 { max-inline-size: 23ch; font-size: clamp(1.875rem, 3.4vw, 2.75rem); line-height: 1.16; letter-spacing: -.045em; }
+.root[data-page="home"] [id="services"] > div:first-child { gap: 1.75rem; }
+.root[data-page="home"] [id="services"] > div:first-child > div { flex: 1 1 28rem; }
+.root[data-page="home"] [id="services"] > div:first-child > p { flex: 0 1 21rem; }
+.root[data-page="home"] [id="services"] :global(.premium-card) > div:first-child { margin-bottom: 1.75rem; }
+.root[data-page="home"] [id="how-it-works"] > div > div:last-child { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.root[data-page="home"] [id="how-it-works"] h3 { margin-top: 1.75rem; }
+.root[data-page="home"] [id="contact"] > div { gap: clamp(2rem, 5vw, 4rem); }
+.root[data-page="home"] [id="contact"] > div > div:last-child { inline-size: 100%; max-inline-size: 31rem; justify-self: end; padding: clamp(1.25rem, 3vw, 2rem); }
+.root[data-page="home"] [id="contact"] form > div[class*="grid"] { grid-template-columns: 1fr; }
+.root[data-page="services"] main > div > a[href^="/services/"] { min-block-size: 19rem; padding: clamp(1.5rem, 2.5vw, 2rem); }
+.root[data-page="service"] main > section { max-inline-size: 48rem; }
+.root[data-page="service"] main > p { max-inline-size: 62ch; }
+.root[data-page="calculator"] main > div:last-child { align-items: start; gap: 1.5rem; }
+.root[data-page="calculator"] main > div:last-child > div { min-inline-size: 0; padding: clamp(1.25rem, 3vw, 2rem); }
+.root[data-page="calculator"] main dl { font-variant-numeric: tabular-nums; }
+.root[data-page="apply"] main form { padding: clamp(1.25rem, 3vw, 2.25rem); }
+.root[data-page="apply"] main dl { gap: 1.25rem; }
+.root[data-page="faq"] main details { padding: 1.25rem 1.5rem; }
+.root[data-page="faq"] main summary { line-height: 1.65; }
+
+.footer { background: #112f2c; color: #d5e0d7; }
+.footerGrid { display: grid; grid-template-columns: 1.3fr 1fr .7fr; gap: clamp(2rem, 5vw, 4rem); padding-block: 3.75rem; }
+.footer .brand { color: #fffdf8; margin-bottom: 1.5rem; }
+.footer p { max-inline-size: 35ch; font-size: .875rem; line-height: 1.85; color: #b7cbbf; }
+.footer .footerNote { margin-top: 1.5rem; font-size: .75rem; color: #ccb589; }
+.root .footer h2 { margin: .5rem 0 1.375rem; font-size: .6875rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #d6b981; }
+.footerGrid > div > a:not(.brand) { display: block; padding-block: .4rem; font-size: .8125rem; color: inherit; text-decoration: none; }
+.footerGrid > div > a:hover { color: white; text-decoration: underline; text-underline-offset: 4px; }
+.footerLegal { padding-block: 1.25rem; border-top: 1px solid #294740; }
+.footerLegal p { max-inline-size: var(--site-width); font-size: .6875rem; }
+
+@media (min-width: 70rem) {
+  .desktopNav, .desktopActions { display: flex; }
+  .mobileToggle, .mobileNav { display: none; }
+  .root[data-page="home"] [id="how-it-works"] > div > div:last-child { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 47.99rem) {
+  .headerRow { min-block-size: 4.5rem; }
+  .footerGrid { grid-template-columns: 1fr 1fr; gap: 2.5rem 1.5rem; }
+  .footerGrid > div:first-child { grid-column: 1 / -1; }
+  .root[data-page="home"] [id="contact"] > div > div:last-child { justify-self: start; }
+  .root main :is(input, select, textarea) { font-size: 1rem; }
+  .root[data-page="home"] [id="how-it-works"] > div > div:last-child { grid-template-columns: 1fr; }
+}
+@media (max-width: 29rem) {
+  .root[data-page="apply"] main dl { grid-template-columns: 1fr; }
+  .introActions { align-items: stretch; gap: .75rem; }
+  .introActions > a { inline-size: 100%; }
+  .breadcrumbs { gap: .5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .root *, .root *::before, .root *::after { scroll-behavior: auto; transition: none; animation: none; }
+}
