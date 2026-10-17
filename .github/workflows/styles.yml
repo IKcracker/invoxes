@@ -1,0 +1,98 @@
+name: Verify styling
+
+on:
+  push:
+    branches: [design/premium-finance-ui]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: styles-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Temporary migration step for the PostCSS dependency. It only writes the
+  # npm-generated lockfile on this feature branch; it never deploys or merges.
+  lockfile:
+    if: github.repository == 'IKcracker/invoxes' && github.ref == 'refs/heads/design/premium-finance-ui'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.lock.outputs.sha }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - name: Regenerate the npm lockfile without executing install scripts
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Commit only the regenerated lockfile on the same feature branch
+        id: lock
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile, appendFile } from 'node:fs/promises';
+          import assert from 'node:assert/strict';
+          const repository = process.env.GITHUB_REPOSITORY;
+          const branch = 'design/premium-finance-ui';
+          assert.equal(repository, 'IKcracker/invoxes');
+          assert.equal(process.env.GITHUB_REF, `refs/heads/${branch}`);
+          const base = `https://api.github.com/repos/${repository}`;
+          const headers = {
+            Authorization: `Bearer ${process.env.GH_TOKEN}`,
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Content-Type': 'application/json',
+          };
+          async function request(route, options = {}) {
+            const response = await fetch(base + route, { ...options, headers });
+            if (!response.ok) throw new Error(`GitHub returned HTTP ${response.status}`);
+            return response.json();
+          }
+          const ref = await request(`/git/ref/heads/${branch}`);
+          assert.equal(ref.object.sha, process.env.GITHUB_SHA,
+            'Branch advanced during dependency resolution; refusing to update an outdated lockfile');
+          const current = await request(`/contents/package-lock.json?ref=${encodeURIComponent(branch)}`);
+          const content = await readFile('package-lock.json', 'utf8');
+          const previous = Buffer.from(current.content, 'base64').toString('utf8');
+          let sha = process.env.GITHUB_SHA;
+          if (content !== previous) {
+            const result = await request('/contents/package-lock.json', {
+              method: 'PUT',
+              body: JSON.stringify({
+                message: 'fix(styles): sync npm lockfile for Tailwind PostCSS',
+                branch,
+                sha: current.sha,
+                content: Buffer.from(content).toString('base64'),
+              }),
+            });
+            sha = result.commit.sha;
+          }
+          await appendFile(process.env.GITHUB_OUTPUT, `sha=${sha}\n`);
+          console.log(`Lockfile source: ${sha}`);
+          NODE
+
+  build:
+    needs: lockfile
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ needs.lockfile.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: node scripts/check-styles.mjs
+      - run: npm run build
