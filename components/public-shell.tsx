@@ -1,9 +1,162 @@
 "use client";
+
 import Link from "next/link";
-import {usePathname} from "next/navigation";
-import {useState} from "react";
-import {ArrowRight,ArrowUpRight,ChevronDown,Gem,Menu,X,ShieldCheck} from "lucide-react";
-import {serviceLinks} from "@/lib/site-content";
-const links=[["About","/about"],["Finance solutions","/services"],["Calculators","/calculator"],["FAQs","/faq"],["Contact","/contact"]] as const;
-export function PublicShell({children}:{children:React.ReactNode}){const pathname=usePathname();const [open,setOpen]=useState(false);const [solutions,setSolutions]=useState(false);return <div className="premium-site min-h-screen bg-[#f8f7f3] text-[#193c40]"><div className="bg-[#143833] px-5 py-2.5 text-center text-[11px] font-medium tracking-wide text-white/80">Independent financial platform concept by Code Tech Agency — not the official Lamna website</div><header className="sticky top-0 z-40 border-b border-[#e7e9e2] bg-[#fdfdfb]/95 backdrop-blur-xl"><div className="mx-auto flex h-[86px] max-w-[1320px] items-center justify-between gap-7 px-6"><Link href="/" className="flex shrink-0 items-center gap-2.5"><span className="flex size-10 items-center justify-center rounded-[5px] bg-[#153d39] text-[#d6b77d]"><Gem size={19}/></span><span className="text-[27px] font-extrabold tracking-[-.09em]">lamna<span className="text-[#b58c51]">.</span></span><span className="ml-2 hidden border-l border-[#d9dfd6] pl-3 text-[10px] font-bold uppercase tracking-[.18em] text-[#88968b] xl:block">Finance experience</span></Link><nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation"><Link href="/about" className={`text-[13px] font-semibold transition hover:text-[#a97f45] ${pathname==="/about"?"text-[#9e783e]":"text-[#3a5650]"}`}>About</Link><div className="group relative"><Link href="/services" className={`inline-flex items-center gap-1.5 py-8 text-[13px] font-semibold transition hover:text-[#a97f45] ${pathname.startsWith("/services")?"text-[#9e783e]":"text-[#3a5650]"}`}>Finance solutions <ChevronDown size={14}/></Link><div className="invisible absolute left-[-20px] top-full w-72 translate-y-2 rounded-[6px] border border-[#e3e9df] bg-white p-2 opacity-0 shadow-[0_25px_65px_rgba(16,50,43,.14)] transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">{serviceLinks.map(s=><Link key={s.slug} href={`/services/${s.slug}`} className="block rounded-[4px] px-4 py-3 text-[13px] font-medium text-[#375b52] hover:bg-[#f1f5f0]">{s.title}</Link>)}</div></div>{[["Calculators","/calculator"],["FAQs","/faq"],["Contact","/contact"]].map(([label,url])=><Link key={url} href={url} className={`text-[13px] font-semibold transition hover:text-[#a97f45] ${pathname===url?"text-[#9e783e]":"text-[#3a5650]"}`}>{label}</Link>)}</nav><div className="hidden items-center gap-5 lg:flex"><Link href="/crm" className="text-xs font-semibold text-[#526d63] hover:text-[#b28b52]">CRM preview <ArrowUpRight size={13} className="inline"/></Link><Link href="/apply" className="inline-flex items-center gap-2 rounded-[4px] bg-[#163d37] px-5 py-3.5 text-xs font-bold text-white hover:bg-[#25584e]">Start an application <ArrowRight size={15}/></Link></div><button aria-label={open?"Close navigation":"Open navigation"} aria-expanded={open} onClick={()=>setOpen(!open)} className="rounded-[4px] border border-[#e0e6dd] p-2.5 lg:hidden">{open?<X size={20}/>:<Menu size={20}/>}</button></div>{open&&<nav aria-label="Mobile navigation" className="border-t border-[#e4e8e0] bg-white px-6 py-5 lg:hidden"><div className="grid gap-1">{links.map(([label,url])=><div key={url}><Link href={url} onClick={()=>setOpen(false)} className="block rounded px-3 py-3 text-sm font-semibold hover:bg-[#f1f5f0]">{label}</Link>{url==="/services"&&<button onClick={()=>setSolutions(!solutions)} className="px-3 pb-2 text-xs text-[#a27e4b]">View all finance categories {solutions?"−":"+"}</button>}{url==="/services"&&solutions&&serviceLinks.map(s=><Link key={s.slug} href={`/services/${s.slug}`} onClick={()=>setOpen(false)} className="block py-2 pl-7 text-xs text-[#506e62]">{s.title}</Link>)}</div>)}<Link href="/crm" onClick={()=>setOpen(false)} className="px-3 py-3 text-sm font-semibold">CRM preview</Link><Link href="/apply" onClick={()=>setOpen(false)} className="mt-3 rounded-[4px] bg-[#163d37] px-5 py-4 text-center text-sm font-semibold text-white">Start an application</Link></div></nav>}</header>{children}<footer className="bg-[#112f2c] text-[#d9e4da]"><div className="mx-auto grid max-w-[1320px] gap-12 px-6 py-20 md:grid-cols-[1.4fr_1fr_1fr]"><div><Link href="/" className="text-3xl font-extrabold tracking-[-.09em] text-white">lamna<span className="text-[#c8a46b]">.</span></Link><p className="mt-5 max-w-sm text-sm leading-7 text-[#abc0b5]">A modern, connected specialist finance experience. Concept design and workflow demonstration by Code Tech Agency.</p><div className="mt-6 flex items-center gap-2 text-xs text-[#c4b184]"><ShieldCheck size={17}/> Independent concept — not a live lending service</div></div><div><p className="mb-6 text-xs font-bold uppercase tracking-[.17em] text-[#d6b981]">Finance solutions</p><div className="space-y-3">{serviceLinks.map(s=><Link href={`/services/${s.slug}`} className="block text-[13px] hover:text-white" key={s.slug}>{s.title}</Link>)}</div></div><div><p className="mb-6 text-xs font-bold uppercase tracking-[.17em] text-[#d6b981]">Explore</p><div className="space-y-3">{[...links,["Apply","/apply"],["CRM preview","/crm"]].map(([label,url])=><Link href={url} key={url} className="block text-[13px] hover:text-white">{label}</Link>)}</div></div></div><div className="border-t border-white/10 px-6 py-5 text-center text-[11px] text-[#91aaa0]">Fictional demonstration only. No official affiliation, verified offer, or real loan processing. Never enter real financial or identity information.</div></footer></div>}
-export function PageIntro({eyebrow,title,description}:{eyebrow:string;title:string;description:string}){return <section className="premium-hero relative isolate overflow-hidden px-6 py-24 text-white md:py-32"><div className="pointer-events-none absolute -right-28 -top-60 size-[730px] rounded-full border border-white/10"/><div className="pointer-events-none absolute -right-10 -top-36 size-[510px] rounded-full border border-white/10"/><div className="relative mx-auto max-w-[1320px]"><p className="mb-6 text-[11px] font-bold uppercase tracking-[.23em] text-[#d9ba80]">{eyebrow}</p><h1 className="max-w-[900px] text-5xl font-medium leading-[1.05] tracking-[-.07em] md:text-[clamp(4rem,6vw,6.5rem)]">{title}</h1><p className="mt-7 max-w-2xl text-[16px] leading-8 text-[#cadbd3]">{description}</p><div className="mt-9 flex flex-wrap gap-3"><Link href="/apply" className="inline-flex items-center gap-2 rounded-[4px] bg-[#d6b981] px-6 py-3.5 text-xs font-bold text-[#173832]">Explore application <ArrowRight size={15}/></Link><Link href="/calculator" className="inline-flex items-center gap-2 rounded-[4px] border border-white/30 px-6 py-3.5 text-xs font-bold">Finance calculator <ArrowUpRight size={15}/></Link></div></div></section>}
+import { usePathname } from "next/navigation";
+import { useRef, useState, type ReactNode } from "react";
+import { ArrowRight, ArrowUpRight, ChevronDown, Gem, Menu, X } from "lucide-react";
+import { serviceLinks } from "@/lib/site-content";
+import styles from "./public-shell.module.css";
+
+const links = [
+  ["About", "/about"],
+  ["Finance solutions", "/services"],
+  ["Calculators", "/calculator"],
+  ["FAQs", "/faq"],
+  ["Contact", "/contact"],
+] as const;
+
+/** One width policy for every public route; CRM layouts stay independent. */
+function pageKind(pathname: string) {
+  if (pathname === "/") return "home";
+  if (pathname.startsWith("/services/")) return "service";
+  return pathname.split("/")[1] || "home";
+}
+
+export function PublicShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const servicesMenu = useRef<HTMLDetailsElement>(null);
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const closeNavigation = () => {
+    setOpen(false);
+    if (servicesMenu.current) servicesMenu.current.open = false;
+  };
+
+  return (
+    <div className={`premium-site ${styles.root}`} data-page={pageKind(pathname)}>
+      <div className={styles.notice}>
+        <div className={styles.container}>
+          Independent concept by Code Tech Agency. Not the official Lamna website.
+        </div>
+      </div>
+      <header
+        className={styles.header}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            const mobileWasOpen = open;
+            const desktopWasOpen = servicesMenu.current?.open;
+            closeNavigation();
+            if (mobileWasOpen) toggle.current?.focus();
+            else if (desktopWasOpen) servicesMenu.current?.querySelector("summary")?.focus();
+          }
+        }}
+      >
+        <div className={`${styles.container} ${styles.headerRow}`}>
+          <Link href="/" className={styles.brand} aria-label="Lamna concept home" onClick={closeNavigation}>
+            <span className={styles.brandIcon}><Gem size={20} aria-hidden="true" /></span>
+            <span>lamna<span className={styles.brandDot}>.</span></span>
+          </Link>
+          <nav className={styles.desktopNav} aria-label="Main navigation">
+            {links.map(([label, href]) => href === "/services" ? (
+              <details className={styles.servicesMenu} ref={servicesMenu} key={href}>
+                <summary className={styles.navLink} data-active={isActive(href)}>
+                  {label}<ChevronDown size={14} aria-hidden="true" />
+                </summary>
+                <div className={styles.dropdown}>
+                  <Link href="/services" onClick={closeNavigation}>All finance solutions <ArrowRight size={15} aria-hidden="true" /></Link>
+                  {serviceLinks.map((service) => (
+                    <Link key={service.slug} href={`/services/${service.slug}`} onClick={closeNavigation}
+                      aria-current={pathname === `/services/${service.slug}` ? "page" : undefined}>
+                      {service.title}
+                    </Link>
+                  ))}
+                </div>
+              </details>
+            ) : (
+              <Link key={href} href={href} className={styles.navLink} data-active={isActive(href)}
+                aria-current={pathname === href ? "page" : undefined} onClick={closeNavigation}>
+                {label}
+              </Link>
+            ))}
+          </nav>
+          <div className={styles.desktopActions}>
+            <Link href="/crm" className={styles.previewLink}>CRM preview <ArrowUpRight size={14} aria-hidden="true" /></Link>
+            <Link href="/apply" className={styles.primaryButton}>Start application <ArrowRight size={15} aria-hidden="true" /></Link>
+          </div>
+          <button ref={toggle} type="button" className={styles.mobileToggle}
+            aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open}
+            aria-controls="public-mobile-navigation" onClick={() => setOpen(!open)}>
+            {open ? <X size={21} aria-hidden="true" /> : <Menu size={21} aria-hidden="true" />}
+          </button>
+        </div>
+        <nav id="public-mobile-navigation" className={styles.mobileNav} aria-label="Mobile navigation" hidden={!open}>
+          <div className={styles.container}>
+            {links.map(([label, href]) => (
+              <div key={href}>
+                <Link href={href} onClick={closeNavigation} aria-current={pathname === href ? "page" : undefined}>{label}</Link>
+                {href === "/services" && (
+                  <details className={styles.mobileServices}>
+                    <summary>Browse finance categories</summary>
+                    {serviceLinks.map((service) => (
+                      <Link key={service.slug} href={`/services/${service.slug}`} onClick={closeNavigation}>{service.title}</Link>
+                    ))}
+                  </details>
+                )}
+              </div>
+            ))}
+            <Link href="/crm" onClick={closeNavigation}>CRM preview</Link>
+            <Link href="/apply" className={styles.primaryButton} onClick={closeNavigation}>Start application <ArrowRight size={16} aria-hidden="true" /></Link>
+          </div>
+        </nav>
+      </header>
+      {children}
+      <footer className={styles.footer}>
+        <div className={`${styles.container} ${styles.footerGrid}`}>
+          <div>
+            <Link href="/" className={styles.brand}>lamna<span className={styles.brandDot}>.</span></Link>
+            <p>A considered specialist finance experience, from first enquiry to the next step.</p>
+            <p className={styles.footerNote}>Independent concept. Not a live lending service.</p>
+          </div>
+          <div>
+            <h2>Finance solutions</h2>
+            {serviceLinks.map((service) => <Link key={service.slug} href={`/services/${service.slug}`}>{service.title}</Link>)}
+          </div>
+          <div>
+            <h2>Explore</h2>
+            {[...links, ["Apply", "/apply"], ["CRM preview", "/crm"]].map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
+          </div>
+        </div>
+        <div className={styles.footerLegal}>
+          <p className={styles.container}>Fictional demonstration only. No official affiliation or real loan processing. Never enter real financial or identity information.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export function PageIntro({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) {
+  const pathname = usePathname();
+  const kind = pageKind(pathname);
+  const brand = kind === "services" || kind === "service";
+  const compact = ["calculator", "apply", "faq", "contact"].includes(kind);
+
+  return (
+    <section className={styles.intro} data-variant={brand ? "brand" : compact ? "compact" : "editorial"}>
+      <div className={`${styles.container} ${styles.introContainer}`}>
+        <nav className={styles.breadcrumbs} aria-label="Breadcrumb">
+          <Link href="/">Home</Link><span aria-hidden="true">/</span>
+          {kind === "service" && <><Link href="/services">Finance solutions</Link><span aria-hidden="true">/</span></>}
+          <span aria-current="page">{kind === "service" ? title : eyebrow}</span>
+        </nav>
+        <p className={styles.eyebrow}>{eyebrow}</p>
+        <h1>{title}</h1>
+        <p className={styles.introDescription}>{description}</p>
+        {!compact && <div className={styles.introActions}>
+          <Link href="/apply" className={brand ? styles.goldButton : styles.primaryButton}>Explore application <ArrowRight size={16} aria-hidden="true" /></Link>
+          <Link href="/calculator" className={styles.textButton}>Finance calculator <ArrowUpRight size={16} aria-hidden="true" /></Link>
+        </div>}
+      </div>
+    </section>
+  );
+}
