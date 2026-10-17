@@ -1,0 +1,5 @@
+import Link from "next/link";
+import {ArrowUpRight} from "lucide-react";
+import {financeServices} from "@/lib/site-content";
+import {PublicShell,PageIntro} from "@/components/public-shell";
+export default function Services(){return <PublicShell><PageIntro eyebrow="Our solutions" title="Finance for the opportunity in front of you." description="Explore dedicated finance journeys, each designed around a different asset, transaction or business need."/><main className="mx-auto grid max-w-6xl gap-5 px-6 py-16 md:grid-cols-2">{Object.entries(financeServices).map(([slug,s],i)=><Link href={`/services/${slug}`} key={slug} className="group rounded-xl border bg-white p-8 hover:border-[#84a49c] hover:shadow-lg"><span className="text-sm font-semibold text-[#bd9859]">0{i+1}</span><h2 className="mt-8 text-2xl font-semibold">{s.title}</h2><p className="mt-4 text-sm leading-7 text-slate-500">{s.intro}</p><p className="mt-8 flex items-center gap-2 text-sm font-semibold text-[#315e59]">Discover solution <ArrowUpRight size={16}/></p></Link>)}</main></PublicShell>}
